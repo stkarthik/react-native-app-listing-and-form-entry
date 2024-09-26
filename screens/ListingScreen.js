@@ -1,37 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import React from 'react';
+import { View, Text, FlatList, TouchableOpacity, Button, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteAddress } from '../reducers/addressReducer';
 
 export default function ListingScreen({ navigation }) {
-  const [addresses, setAddresses] = useState([]);
-
-  useEffect(() => {
-    // Fetch the list of addresses from API
-    axios.get('https://example.com/api/addresses')
-      .then(response => setAddresses(response.data))
-      .catch(error => console.error(error));
-  }, []);
-
-  const deleteAddress = (id) => {
-    axios.delete(`https://example.com/api/addresses/${id}`)
-      .then(() => setAddresses(prev => prev.filter(addr => addr.id !== id)))
-      .catch(error => console.error(error));
-  };
+  const addresses = useSelector((state) => state.addresses);
+  const dispatch = useDispatch();
 
   const renderAddress = ({ item }) => (
-    <TouchableOpacity onLongPress={() => deleteAddress(item.id)}>
+    <TouchableOpacity
+      onLongPress={() => dispatch(deleteAddress(item.id))}
+      style={styles.listItem}
+    >
       <Text>{item.address}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         data={addresses}
-        keyExtractor={item => item.id}
         renderItem={renderAddress}
+        keyExtractor={(item) => item.id.toString()}
       />
-      <Button title="Add New Address" onPress={() => navigation.navigate('AddAddress')} />
+      <Button title="Add Address" onPress={() => navigation.navigate('AddAddress')} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  listItem: {
+    padding: 15,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    marginVertical: 5,
+  },
+});

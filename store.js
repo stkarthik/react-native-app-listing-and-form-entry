@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import addressesReducer from './addressesSlice';
+import phoneReducer from './reducers/phoneReducer';
+import addressReducer from './reducers/addressReducer';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    addresses: addressesReducer,
+    phone: phoneReducer,
+    addresses: addressReducer,
   },
 });
+
+export default store;

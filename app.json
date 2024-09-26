@@ -12,7 +12,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.karthikgiggso.reactnativeapplistingandformentry"
     },
     "android": {
       "adaptiveIcon": {

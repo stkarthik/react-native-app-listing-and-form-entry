@@ -109,7 +109,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.reactnativeapplistingandformentry"
+    namespace 'com.karthikgiggso.reactnativeapplistingandformentry'
     defaultConfig {
         applicationId 'com.karthikgiggso.reactnativeapplistingandformentry'
         minSdkVersion rootProject.ext.minSdkVersion

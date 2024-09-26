@@ -3,29 +3,28 @@ import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
-import { addAddress } from '../reducers/addressReducer';
+import { addAddress, updateAddress } from '../reducers/addressReducer';
 
+// Form validation schema
 const AddressSchema = Yup.object().shape({
   address: Yup.string().required('Address is required'),
 });
 
-let idCounter = 0;
-
-function generateId() {
-  idCounter += 1;
-  return idCounter.toString();
-}
-
-export default function AddAddressScreen({ navigation }) {
+export default function AddAddressScreen({ navigation, route }) {
   const dispatch = useDispatch();
+  const { address } = route.params || {};  // Get address from navigation params (if editing)
 
   return (
     <Formik
-      initialValues={{ address: '' }}
+      initialValues={{ address: address ? address.address : '' }}  // Pre-fill the form if editing
       validationSchema={AddressSchema}
       onSubmit={(values) => {
-        dispatch(addAddress({ id: generateId(), address: values.address }));
-        navigation.navigate('Listing');
+        if (address) {
+          dispatch(updateAddress({ id: address.id, address: values.address }));
+        } else {
+          dispatch(addAddress({ id: Date.now().toString(), address: values.address }));
+        }
+        navigation.navigate('Listing');  // Navigate back to the listing screen
       }}
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -37,10 +36,18 @@ export default function AddAddressScreen({ navigation }) {
             value={values.address}
             style={styles.input}
           />
+          {/* Display validation error if address is not valid */}
           {errors.address && touched.address ? (
             <Text style={styles.errorText}>{errors.address}</Text>
           ) : null}
-          <Button title="Submit" onPress={handleSubmit} />
+
+          {/* Render the Submit/Update button */}
+          <View style={styles.buttonContainer}>
+            <Button
+              title={address ? 'Update' : 'Submit'}  // If editing, show "Update"; otherwise "Submit"
+              onPress={handleSubmit}  // Trigger form submission
+            />
+          </View>
         </View>
       )}
     </Formik>
@@ -62,5 +69,10 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    marginTop: 20,
   },
 });
